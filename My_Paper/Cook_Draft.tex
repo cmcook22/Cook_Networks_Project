@@ -7,7 +7,7 @@
 \usepackage{amsmath} 
 \usepackage{amssymb}
 \usepackage{subfigure}
-\usepackage[colorlinks=true, urlcolor=blue]{hyperref}
+\usepackage[colorlinks=true, urlcolor=blue, linkcolor=blue]{hyperref}
 
 \setlength{\droptitle}{-10em} 
 \addtolength{\oddsidemargin}{-.875in}
@@ -25,7 +25,7 @@
 
 \begin{document}
 	\title{A Network Perspective on LDA *DRAFT*}
-	\author{Cindy Cook \\ \normalsize Network Analysis Final Project \\ \normalsize April 2015}
+	\author{Cindy Cook \\ \normalsize Network Analysis Final Project \\ \normalsize 5 May 2016}
 	\date{}
 	\maketitle
 
@@ -41,18 +41,18 @@ Although TopicMapping appears to solve the basic problems involved when applying
 
 \section{Replicate the Study}
 
-The paper, ``High-Reproducibility and High-Accuracy Method for Automated Topic Classification," consists of four main parts \cite{main}. The first points out a major limitation to the LDA algorithm developed by Blei as a topic model \cite{lda}. The second describes a new method called TopicMapping developed to overcome theoretical drawbacks of LDA. The third consists of comparing the accuracy and reproducibility of TopicMapping as compared to LDA and pLSA \cite{plsa} on synthetic data. The final aspect of the paper, applies TopicMapping to two real world datasets. I have been able to successfully reproduce the accuracy and reproducibility results for the comparisons between TopicMapping and randomly seeded LDA in both the simulated studies and one of the real world applications. The results of my replication can be found in Appendix A. All data and scripts can be found on github \href{https://github.com/cmcook22/Cook_Networks_Project}{here} .    
+The paper, ``High-Reproducibility and High-Accuracy Method for Automated Topic Classification," consists of four main parts \cite{main}. The first points out a major limitation to the LDA algorithm developed by Blei as a topic model \cite{lda}. The second describes a new method called TopicMapping developed to overcome theoretical drawbacks of LDA. The third consists of comparing the accuracy and reproducibility of TopicMapping as compared to LDA and pLSA \cite{plsa} on synthetic data. The final aspect of the paper, applies TopicMapping to two real world datasets. I have been able to successfully reproduce the accuracy and reproducibility results for the comparisons between TopicMapping and randomly seeded LDA in both the simulated studies and one of the real world applications. The results of my replication can be found in \hyperlink{A}{Appendix A}. All data and scripts can be found on github:   \href{https://github.com/cmcook22/Cook_Networks_Project}{here} .    
 
 \section{The Data}
 
-There are two main `real world' datasets used to test the TopicMapping algorithm:  Science and Wikipedia. The Science corpus contains $28,838$ documents from the web of science, where each document contains the title and abstract of a paper published in one of six top journals from different disciplines. After preprocessing the data, there are $106,143$ unique words and over $8.7 \times 10^{6}$ edges. The Wikipedia dataset contains over $4 \times 10^{6}$ nodes with over $800 \times 10^{6}$ edges. Due to the size of the Wikipedia data set, I was unable to receive this information from the authors of \cite{main}. Therefore, I will focus on the Science data set only. Although the Science corpus was easily sent to me, it is still considered `large.' In R, the adjacency matrix is too large to be stored. 
+There are two main `real world' datasets used to test the TopicMapping algorithm:  Science and Wikipedia. The Science corpus contains $28,838$ documents from the web of science, where each document contains the title and abstract of a paper published in one of six top journals from different disciplines. After preprocessing the data, there are $106,143$ unique words and over $8.7 \times 10^{6}$ edges. The Wikipedia dataset contains over $4 \times 10^{6}$ nodes with over $800 \times 10^{6}$ edges. Due to the size of the Wikipedia data set, I was unable to receive this information from the authors of \cite{main}. Therefore, I focused my replication and extension on the Science data set only. Although the Science corpus was easily sent to me, it is still considered `large.' In R, the adjacency matrix is too large to be stored. 
 \\
 \\
-Due to the size of the WoS dataset, I randomly selected $10$ documents in each subject to create a working dataset with a total of $60$ documents. This dataset is called referred to as Science. The second corpus I will be considering was obtained from Indeed.com. Each document contains the past work experience from resumes within five different fields: teaching, graphic design, architecture, nursing, and accounting. The corpus contains $50$ documents. I will refer to this corpus as the resume corpus. 
+Due to the size of the WoS dataset, I randomly selected $10$ documents in each subject to create a working dataset for a total of $60$ documents. This dataset is referred to as the Science corpus. The second corpus I will be considering was obtained from Indeed.com. Each document contains the past work experience from resumes within five different fields: teaching, graphic design, architecture, nursing, and accounting. The corpus contains $50$ documents. I will refer to this corpus as the Indeed corpus. 
 
 \subsection{Creating the Networks}
 
-After obtaining documents for both corpus's, the network of words is created in R by first using the \textit{tm} package to obtain the term frequency matrix. Then a stemmer is applied, and basic English stop words are removed. The \textit{bipartite} package is then used to project this term frequency (i.e. the adjacency matrix for a two-mode network) onto a one-mode network of words weighted by the number of times a pair of words appears together across all documents. Then the filtering process laid out in \cite{mainExtra} is applied. The following shows the size of the networks through this process:
+After obtaining documents for both corpus's, a network of words is created in R by first using the \textit{tm} package to obtain the term frequency matrix. Then a stemmer is applied, and basic English stop words are removed. The stemmer and stop words applied are the same as used in \cite{main}. The \textit{bipartite} package is then used to project this term frequency (i.e. the adjacency matrix for a two-mode network) onto a one-mode network of words weighted by the number of times a pair of words appears together across all documents. Then the filtering process laid out in \cite{mainExtra} is applied. The following shows the size of each network through this process:
 \vspace{2mm}
 \begin{center}
 	\begin{tabular}{ |c|c|c||c|c|  }
@@ -68,36 +68,57 @@ After obtaining documents for both corpus's, the network of words is created in 
 		\hline
 	\end{tabular}
 \end{center}
- 
-\section{Comparison}
-After applying TopicMapping to both Science and Indeed, I obtained the following results: 
 \vspace{2mm}
-\begin{center}
-	\includegraphics[scale=0.5]{Images/comparison1.jpeg}
-\end{center} 
+Plotting the networks using the Fruchterman-Reingold layout in NodeXL we obtain the following images: 
+\vspace{2mm}
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.5]{Images/Sci.png}
+	\includegraphics[scale=0.5]{Images/Ind.png}
+	\caption{on the left:  Science word network; on the right:  Indeed word network}
+\end{figure}
+In both networks, we can see black filled in circles, which are words that appear equally in all topics and are not assigned a clustering id. There are six and five clusters, one for each topic in Science and Indeed, respectively. InfoMap perfectly assigns one topic shown as the green open circles, but does not perfectly assign topics in any other cluster, but these are the only results we can conclude from visual analysis.
+
+\section{Comparison}
+
+Using the code provided to me, I run TopicMapping on both Science and Indeed $300$ times:  $100$ times with $K=3$, $100$ times with $K=6$, and $100$ times with $K=10$. I also run the LDA function in R with the VEM method for estimation and different starting seeds on both Science and Indeed $300$ times$100$ times with $K=3$, $100$ times with $K=5$, and $100$ times with $K=10$. Note that for Science and Indeed the correct number of toopics is $5, 6,$ respectively. To compare results, I calculate the accuracy and reproducibility as defined in \cite{mainExtra}. I obtained the following results: 
+\vspace{2mm}
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.5]{Images/results.png}
+	\caption{Plots on the top show boxplots of the accuracy for 100 runs on Science(orange) and Indeed (blue). Plots on the bottom show the reproducibility for the 100 runs.}
+\end{figure}
 \vspace{2mm} 
-We can see that TopicMapping performed with approximately $70\%$ accuracy and $70\%$ reproducibility for the Science corpus. However, the accuracy is around $10\%$ and the reproducibility is around $100\%$ for the Indeed corpus. There is clearly a wide range in the accuracy of TopicMapping. I hypothesize that TopicMapping is highly dependent on the clustering done by InfoMap. If InfoMap does not produce accurate results, it can lead the estimation procedure of LDA into the wrong part of the parameter space leading to completely inaccurate results. The major difference between the two corpus's lies in the fact that words used in titles and abstracts of journal articles do not readily appear across different disciplines. Whereas words used in resumes to describe past work experience cross fields more easily. In fact, we can see from the following plot, the proportion of words from our two cleaned corpus's that cross these boundaries:
-\begin{center}
+
+\noindent We can see that TopicMapping performed with approximately $75\%$ accuracy and $80\%$ reproducibility for the Science corpus. However, the accuracy is around $10\%$ and the reproducibility is extremely variable for the Indeed corpus. We should also notice that TopicMapping outperforms LDA only on the Science corpus, but fails to produce better results for the Indeed corpus. I hypothesize that TopicMapping is highly dependent on the clustering done through InfoMap. If InfoMap does not produce accurate results, it can lead the estimation procedure of LDA into the wrong part of the parameter space resulting in completely inaccurate results. The major difference between the two corpus's lies in the fact that words used in titles and abstracts of journal articles do not readily appear across different disciplines. Whereas words used in resumes to describe past work experience cross fields more easily. In fact, we can see from the following plot, the proportion of words from our two cleaned corpus's that cross these boundaries:
+\vspace{2mm}
+\begin{figure}[H]
+	\centering
 	\includegraphics[scale=0.5]{Images/props.jpeg}
-\end{center} 
+\caption{The proportion of unique words in each corpus that belong to at least 1, 2, 3, 4, and 5 topics for both the Science (orange) and Indeed (blue) corpus's are shown above.}
+\end{figure}
+\vspace{2mm}
+
+\noindent We can clearly see that close to zero percent of the Science corpus unique words are shared across all six topics, whereas, close to $20\%$ of the unique words in the Indeed corpus are shared across all job categories.
+
 \subsection{Descriptive Statistics}
 
-To begin analysis on these networks, I use the \textit{igraph} package in R to measure the betweenness centrality for each node, which will allow me to analyze structural holes and bridges. Words that are highly used within each document and common across all documents will have high betweenness scores. As we see in the plot above less then $1\%$ of the words in the science corpus appear in at least one document from all six disciplines. Whereas, about $4\%$ appear in at least one resume from all  
+To begin analysis on these networks, I use the \textit{igraph} package in R to measure the betweenness centrality for each node, which will allow me to analyze structural holes and bridges. Words that are highly used within each document and common across all documents will have high betweenness scores: 
 \vspace{2mm}
-\begin{figure}[h]
+\begin{figure}[H]
 	\hfill
 	\subfigure[Science]{\includegraphics[scale=0.5]{Images/Sci_between.pdf}}
 	\hfill
 	\subfigure[Indeed]{\includegraphics[scale=0.5]{Images/Indeed_between.pdf}}
 	\hfill
-	\caption{Betweenness Centrality}
+	\caption{Boxplots of the betweenness centrality scores for each corpus.}
 \end{figure}
 \vspace{2mm}
 
-Words with the highest betweenness scores for Science are as follows:  result (123287.95), use (67756.22), model (67159.62), data (60749.09), suggest (56224.20), and studi (55947.48). Words with the highest betweenness scores for Indeed are as follows:  present (39422.6), pa (31815.2), respons (19401.64), includ (18680.75), work (16158.91), and design (12703.92). As predicted, these words are used often in each document no matter what discipline or field the document is in. This fact would be obvious for any projected word network. There is only a slight difference in the distribution of betweenness scores. We find that for the Science corpus only $680$ words in the network $(34\%)$, have a betweenness centrality greater than one, while $1829$ $(92\%)$have a betweenness score greater than $0$. For the Indeed corpus, $404$ words $(37\%)$ of the words have a betweenness score greater then 1, while $1061$ or $(98\%)$ of the words have a betweenness score greater than 0. The concept of TopicMapping is more successful in the Science network due to the fact that words from one topic (i.e. one journal) tend to cluster, while fewer words tend to act as bridges between these clusters. Whereas we see the same phenomea in the the Indeed network, just at a higher rate.
+\noindent Words with the highest betweenness scores for Science are as follows:  result (123287.95), use (67756.22), model (67159.62), data (60749.09), suggest (56224.20), and studi (55947.48). Words with the highest betweenness scores for Indeed are as follows:  present (39422.6), pa (31815.2), respons (19401.64), includ (18680.75), work (16158.91), and design (12703.92). As predicted, these words are used often in each document no matter what discipline or field the document is in. This fact would be obvious for any projected word network. There is only a slight difference in the distribution of betweenness scores. We find that for the Science corpus only $680$ words in the network, or about $(34\%)$, have a betweenness centrality greater than one, while $1829$, or about $(92\%)$, have a betweenness score greater than $0$. For the Indeed corpus. For the Indeed corpus, $404$ words, or about $(37\%)$ of the words, have a betweenness score greater then 1, while $1061$, or about $(98\%)$ of the words, have a betweenness score greater than 0. I would expect this difference to be more pronounced given the TopicMapping results. 
 \\
 \\
-Next, I will find the transitivity score of the network. Due to the clustering of the nodes, I hypothesis that this value is positive and high. In fact it is $0.4181239$ for the Science corpus and $0.4279717$ for the Indeed corpus. These values are really close indicating that the number of transitive triads is very similar in both networks. In fact we can see the following triad censuses:
+Next, I will find the transitivity score of the network. Transitivity can be used as a clustering coefficient for networks. Thus, I hypothesis that this value is positive for both networks, but higher for the Science corpus than the Indeed corpus. However, it turns out that this measure it similar for both corpus:  $0.4181239$ for the Science corpus and $0.4279717$ for the Indeed corpus. Taking a closer look, we see the following triad censuses:
 \vspace{2mm}
 \begin{center}
 	\begin{tabular}{ |c||c|c|c|c|  }
@@ -110,54 +131,94 @@ Next, I will find the transitivity score of the network. Due to the clustering o
 	\end{tabular}
 \end{center}
 \vspace{2mm}
-that first there are only four possible triads, and the distribution of these are very similar in both Science and Indeed. 
+
+\noindent Since both networks are undirected, there are only four possible triads, and the distribution of these are very similar in both Science and Indeed. In fact, it turns out that several descriptive statistics are very similar for both networks including density $(0.06085374, 0.08424908)$, degree assortitivity, $(-0.06119152, -0.12577)$, and their degree distributions:
+\vspace{2mm}
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{Images/degree_hist_sci.jpeg}
+	\includegraphics[scale=0.4]{Images/degree_hist_ind.jpeg}
+	%\caption{.}
+\end{figure}
+\vspace{2mm} 
+
+\noindent as well as their modularity for several different methods:
+\vspace{2mm}
+\begin{center}
+	\begin{tabular}{ |c|c|c|  }
+		\hline
+		&Modularity& \\
+		\hline
+		Clustering Type&Science&Indeed \\ 
+		\hline 
+		InfoMap& 0.3884&0.3881 \\
+		Fast-Greedy& 0.3398& 0.3358\\
+		Eigenvalue& 0.3624&0.3616 \\
+		Louvain&0.3936&0.3904 \\
+		Walktrap&0.3257&0.3431 \\
+		\hline
+	\end{tabular}
+\end{center}
+\vspace{2mm}
+\noindent TopicMapping uses the InfoMap clustering algorithm, which yields $41$ different clusters for the Science Corpus and $24$ for the Indeed corpus. Plotting the networks with nodes colored according to InfoMap cluster, we obtain the following:
+\vspace{2mm}
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.5]{Images/networks.png}
+	\caption{Science is plotted on the top, while Indeed is plotted on the bottom. The network colored according to InfoMap clusters is on the left, while words are clustered and are assigned symbols according to the topic they appear in the most often through the corpus.}
+\end{figure}
+\vspace{2mm}
+
 \section{ERGMS}
 
-Since my hypothesis is that projected word networks which do not cluster well will not perform well in terms of TopicMapping, I plan to explore the extent of homophily in each network as quantified using ERGMS. For each network, I first use the InfoMap clustering algorithm in the \textit{iGraph} package in R to obtain membership ids for each word. I then fit an ergm with the nodematch term to test for homophily in each network. I include both edges and isolates in the network. I obtain the following Maximum Pseudolikelihood Results:
+I hypothesize that projected word networks which do not cluster well will not perform well in terms of TopicMapping. Since there do not appear to be any differences in the word networks from a structural stand-point, I plan to explore the extent of homophily in each network as quantified using ERGMS. For each network, I first use the InfoMap clustering algorithm in the \textit{iGraph} package in R to obtain membership ids for each word. I then fit an ergm with the nodematch term to test for homophily in each network. I include both edges and isolates as controls. Although there are several clustering algorithms to choose from, I focus only on InfoMap because it is used in the TopicMapping algorithm. The coefficients were obtained using MLE. The MCMC diagnostic plots as well as goodness of fit plots can be found in \hyperlink{B}{Appendix B}. I obtain the following Maximum Pseudolikelihood Results:
 \vspace{2mm}
 \begin{center}
 	\begin{tabular}{ |c|c|c|c|c||c|c|c|c|c|c|  }
 		\hline
-		Science&&&&&Indeed&&& \\
+		&Science&&&&Indeed&&& \\
 		\hline
 		&Estimate&Std. Error&MCMC$\%$&p-value&Estimate&Std. Error&MCMC$\%$&p-value \\ 
 		\hline 
-		edges&-3.35858&0.004053&0&$<0.0001$&-2.986225&0.006292&0&$<0.0001$\\
+		edges&-3.3591&0.0040&0&$<0.0001$&-2.9925&0.0063&0&$<0.0001$\\
 		isolate&-Inf&0&0&$<0.0001$&-Inf&0&0&$<0.0001$\\
-		edges&3.373386&0.007151&0&$<0.0001$&3.159993&0.011496&0&$<0.0001$\\
+		homophily&3.3696&0.0077&1&$<0.0001$&3.3616&0.0122&0&$<0.0001$\\
 		\hline
 	\end{tabular}
 \end{center}
 \vspace{2mm}
-First note that the MCMC percentages are all 0 since I am using MPLE estimation and not MLE. Also note that the coefficient for the isolates term is negative infinity since there are no isolates in either network. I included the term because by definition, there should never be any isolate in a word projection network. Next we should notice that both of the homophily terms are significant, positive, and approximately $3$. There is a slight decrease in the term for Indeed, but not as much as I expected. It is important before analyzing these results further to look at goodness of fit statistics. The plots can be found in Appendix B. We can clearly see that neither ergm fits well. In fact, both ergms appear to be degenerate. After attempting to include different degree properties, edge weights, and several other options, none of the more complex models converge. To verify these results, I fit QAP models, where the response is the weighted projected word network, and the predictor is the binary network indicating if two nodes are connected and if they are in the cluster. I obtain the following results:
+First note that the coefficient for the isolates term is negative infinity since there are no isolates in either network. I included the term because by definition, there should never be any isolate in a word projection network. Next we should notice that both of the homophily terms are significant, positive, and approximately $3.36$. There is an extremely slight decrease in the term for Indeed, but not as much as I expected. 
+\\
+\\
+It is important before analyzing these results further to take a close look at the goodness of fit statistics. We can clearly see that neither ergm fits well. After several attempts to obtain a better fit by including terms for different degree properties, edge weights, and several other options, none of the more complex models converged. It is important to verify these results. I will first apply QAP regression, where the response is the weighted projected word network, and the predictor is the binary network indicating if two nodes are connected and if they are in the same cluster. I use the netlm function in the sna package in R. I obtain the following results:
 \vspace{2mm}
 \begin{center}
-	\begin{tabular}{ |c|c|c|c|c||c|c|c|c|c|c|  }
+	\begin{tabular}{ |c|c|c|c|c||c|c|c|c|  }
 		\hline
-		Science&&&&&Indeed&&& \\
+		&Science&&&&Indeed&&& \\
 		\hline
-		&Estimate&Pr$(<=b)$ &Pr$(>=b)$ &Pr$(>=|b|)$&Estimate&Pr$(<=b)$ &Pr$(>=b)$ &Pr$(>=|b|)$ \\ 
+		&Estimate&Pr$(\le b)$ &Pr$(\ge b)$ &Pr$(\ge |b|)$&Estimate&Pr$(\le b)$ &Pr$(\ge b)$ &Pr$(\ge |b|)$ \\ 
 		\hline 
-		intercept&0.5906065& 1&       0&       0&0.5423806& 1&       0&       0&      \\
-		x1&-0.5517617 &0       &1       &0&-0.4856092 &0       &1       &0\\
+		intercept&0.0463& 1&   0&  0&0.0621& 1&       0&       0      \\
+		Homophily&0.9537 &1  &0   &0&0.9379 &1       &0       &0\\
+		\hline
+		Adj. $R^{2}$&0.2406&&&&0.245&&& \\
 		\hline
 	\end{tabular}
 \end{center}
 \vspace{2mm}
-Note that for the binary predictor, a one represents that two documents are not in the same cluster. The Science QAP has an adjusted $R^2$ of 0.1757, while Indeed has an adjusted $R^2$ of 0.1386.As we can see, the two models are extremely similar, which is not what I hypothesized. However, I will note that although the coefficient is negative, we still have the same interpretation as with the ergms. A new additional node with a cluster id will attach to other nodes with the same clustering id with a coefficient of 0.59 on average and will attach to a node with different clustering ids with a coefficient of 0.04 for Science and coefficients of 0.54 and 0.06 for Indeed respectfully.    
+Note that for the binary predictor, a one represents that two words are tied and in the same cluster. As we can see, the two models are extremely similar, which is expected after seeing the ergm output. The coefficients have the same sign, but are lower. The models do have the same interpretation:  a new additional node with a cluster id will attach to other nodes with the same clustering id with a coefficient of about 0.9 on average and will attach to a node with different clustering ids with a coefficient of about 0.05 regardless of corpus. These results suggest that there is positive homophily in both networks at a similar rate, which is contrary to what I hypothesized.   
+\\
+\\
+As a second precaution, I will perform a conditional uniform graph test to make sure that the clustering coefficient is in fact significantly different for both models as compared to what would be expected based on each network's respective dyad distribution. I use the rguman function in the sna package to simulate 100 random netwroks conditional on the dyad distribution for each corpus. I then obtain the clustering ids from the InfoMap algorithm and calculate the modularity for each simulated network. Comparing these results, it is easy to see that for all of the simulated networks, the modularity is negative and close to $0$. Where as we saw earlier, the modularity for both Science and Indeed was close to $0.39.$ 
+ 
 \section{Conclusions}
-
-\subsection{Discussion}
-
-\subsection{Future Directions}
-
 
 
 
 
 
 \newpage
-\section{Bibliography}
 \begin{thebibliography}{4}
 		
 	\bibitem{STACK}
@@ -235,6 +296,7 @@ Note that for the binary predictor, a one represents that two documents are not 
 
 \newpage
 \appendix
+\hypertarget{A}{}
 \section{Replication Study}
 \subsection{LDA Limitations}
 The paper \cite{main} begins with a simple thought experiment. Given a Corpus consisting of documents in three distinct languages, say English, Spanish, and French, let all words in each language be unique and each document contain only one language. Ideally, a topic model would produce three distinct topics, one for each of the unique languages. However, this is not the case with LDA. The authors of \cite{main} show the likelihood of the generative model (i.e. placing all English documents in one topic, all Spanish documents in another, and all French documents in the last topic) is not always maximum. In fact they describe an alternative model, which theoretically obtains a higher likelihood. The alternative model is defined by separating one language into two dialect topics and combining the other two languages into one topic. In fact the authors prove in the supplemental material that, ``it is possible to find an extremely large number of alternative models (with the same number of topics) which overfit some topics and underfit some others but have a better likelihood then the true generative model" \cite{mainExtra}. These results are visualized in Fig. 2 (pg. 3,\cite{main}). Part a illustrates the differences in the generative and alternative models considered. Part b and c show the theoretical limits on the log likelihood for both generative and alternative models when considering a vocabulary of $60$ unique words, where $20$ are in either $E, S,$ or $F$. The corpus contains $1000$ documents, where each document contains $10$ words chosen uniformly from one language. Specifically, they show that the for these particular parameter values, if the fraction of $E$ documents in the corpus is greater than $0.936,$ then the likelihood of the alternative model become greater than the likelihood for the generative model. 
@@ -284,7 +346,7 @@ There are two types of major synthetic data analyzed in the paper. The first typ
 \noindent I begin with the language corpuses, where I obtained the following accuracy and reproducibility results:
 \vspace{2mm}
 \begin{center}
-	\includegraphics[scale=0.8]{Images/plot_largeC.jpeg}
+	\includegraphics[scale=0.7]{Images/plot_largeC.jpeg}
 \end{center} 
 \vspace{2mm}
 \noindent The plot above shows accuracy (top) and reproducibility (bottom) results for running LDA (green) and TopicMapping (blue) $100$ times on both equal (left) and unequal (right) topic distributions. With both algorithms, the number of topics was fixed at $10$. The median for the $100$ runs is plotted, where dotted lines indicate the $25$th and $75$th percentiles for both algorithms as described in \cite{main}. We can clearly see that the results follow the same patterns as shown in \cite{main}. TopicMapping is performing at near perfect accuracy and reproducibility for both equally and unequally sized topics regardless of the number of documents in the corpus. LDA clearly performs with greater variance, and does slightly better as the number of documents increases. Yet, TopicMapping outperforms LDA in all cases.
@@ -303,7 +365,7 @@ There are two types of major synthetic data analyzed in the paper. The first typ
 \noindent Lastly, we will look at the results obtained from running both LDA and TopicMapping on the second set of simulated datasets when the hyper-parameters are set to $0.064$:
 \vspace{2mm}
 \begin{center}
-	\includegraphics[scale=0.8]{Images/plot_Alpha2.jpeg}
+	\includegraphics[scale=0.7]{Images/plot_Alpha2.jpeg}
 \end{center} 
 \vspace{2mm}
 
@@ -316,43 +378,56 @@ I received emails back from two of the authors providing me with the corpus for 
 
 \vspace{2mm}
 \begin{center} 
-	\includegraphics[scale=0.5]{Images/plot_WoS.jpeg} 
+	\includegraphics[scale=0.4]{Images/plot_WoS.jpeg} 
 \end{center} 
 \vspace{2mm}  
 
 \noindent I have plotted the median accuracy (left) and reproducibility (right) from the $100$ runs for both TopicMapping (blue) and LDA (green) with dotted lines representing the $25$th and $75$th percentiles. The results were found when the number of topics was set at $6$ the correct number and at $24$ as in \cite{main}. We notice that with both cases the correct number of topics and incorrect number, TopicMapping does well in both accuracy and reproducibility. However, LDA performs better when the correct number of topics specified. Again, TopicMapping outperforms LDA in all cases. 
 
+\newpage
+\hypertarget{B}{}
 \section{ERGM GOF}
-We can see in the plots below show how complex the network is by the fact that the images do not fit nicely on this page:
+From the MCMC diagnostics plots below, we can see that the MCMC estimates converged:
+\vspace{2mm}
+\begin{center} 
+	%\includegraphics[scale=0.4]{Images/sci_mcmc1.jpeg} 
+	\includegraphics[scale=0.4]{Images/ind_mcmc1.jpeg} 
+\end{center} 
+\vspace{2mm}
+The Geweke statistics for the Science and Indeed corpus were all insignificant at the 0.05 level with an overall p-value of 0.1125 and 0.04224, respectively. The quantiles can be seen below:
+ \vspace{2mm}
+ \begin{center}
+ 	\begin{tabular}{ |c||c|c|c|c|c|  }
+ 		\hline
+ 		&$2.5\%$     &$25\%$     &$50\%$    &$75\%$  &$97.5\%$ \\
+ 		\hline
+ 		Science&&&&& \\
+ 		\hline
+ 		edges&           -387&  -154&  -24&  106&  363 \\
+ 		nodematch.clust&  -247&  -103&  -22&  63&225 \\
+ 		\hline
+ 		Indeed&&&&& \\
+ 		\hline
+ 		edges&           -376&  -131&  -2&  121&  359 \\
+ 		nodematch.clust&  -191&  -73&  -5&  64&183 \\
+ 		\hline
+ 	\end{tabular}
+ \end{center}
+ \vspace{2mm}
+We can clearly see that both ergms are not degenerate. However in the following goodness of fit plots, we can see how complex these networks are. Neither ergm fits the data well:
 \vspace{2mm}
 \begin{center} 
 	\includegraphics[scale=0.05]{Images/Sci_fit2.pdf} 
 	\includegraphics[scale=0.05]{Images/Indeed_fit2.pdf} 
 \end{center} 
 \vspace{2mm}
-The following show the first part of each image blown up. We can see that neither ergm model fits well:
+The following show the first part of each image blown up. We can now clearly see that neither ergm model fits well:
 \vspace{2mm}
 \begin{center} 
 	\includegraphics[scale=0.5]{Images/Sci_fit2.pdf} 
 	\includegraphics[scale=0.5]{Images/Indeed_fit2.pdf} 
 \end{center} 
 \vspace{2mm}
-\section{Extra Stuff for now}
-Lastly, I found that the degree assortitivity is negative and low at $ -0.06119152$ for the Science corpus. It is also negative for the Indeed corpus, but is twice as large at  $-0.12577$. Here we see that words which are highly connected do not tend to connect with each other. This is more so for Indeed then for Science. In terms of a projected word network, this means that words such as (what are these words??) tend to 
-\par
-In particular, the program crashes while trying to plot the network using the plot function in the network package. In order to visually see the network, I used only the first $10$ documents to create a network.
-
-\begin{figure}[h!]
-	\centering
-	\includegraphics[width=70mm,height=60mm]{Images/simple_plot.pdf}
-	\caption{Network Plot of the first $10$ Documents} 
-\end{figure} 
-
-What we immediatley see in this plot are very distinct clusters along with very distinct bridges. Explain what this is informing us here...
-The article also makes use of several synthetic datasets: list and explain here for what I will use...
-
-
-
 
 
 \end{document}
